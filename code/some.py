@@ -139,8 +139,8 @@ def some(g):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1: # one file: python3 some.py data/G-ex.txt
-        print(some(load(sys.argv[1])))
+        print(str(some(load(sys.argv[1]))).lower())
     else: # no file: run all instances
         for path in sorted(glob.glob("data/*.txt")):
             name = os.path.basename(path)[:-4]
-            print(name, some(load(path)))
+            print(name, str(some(load(path))).lower())
