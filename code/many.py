@@ -59,9 +59,9 @@ def path_through(g, w):
 
     to = [] # where edge e points
     cap = [] # how much capacity edge e has (left)
-    out_edges = [[] for _ in range(N)] # list of edge numbers leave node x
+    out_edges = [[] for _ in range(N)] # list of edge numbers leaving node x
 
-    def add_edge(a, b, c): # every time you call this function you add and edge from a to b with capacity c (forward edge) and edge b to a with capacity 0 (backward edge)
+    def add_edge(a, b, c): # every time you call this function you add an edge from a to b with capacity c (forward edge) and edge b to a with capacity 0 (backward edge)
         out_edges[a].append(len(to))
         to.append(b)
         cap.append(c)  
@@ -80,10 +80,10 @@ def path_through(g, w):
     add_edge(2 * g.s + 1, T, 1) # build edges touching s
     add_edge(2 * g.t + 1, T, 1) # build edges touching t
 
-    source = 2 * w + 1 # where the flow starts (form w)
+    source = 2 * w + 1 # where the flow starts (from w)
     flow = 0 # flow counts how many units have reached T (the sink)
 
-    while flow < 2: # the s,t path through w has two halves: one from w to s and one form w to t. Each half is one path leaving from w and each unit of flow is also one path leaving from w. Therefore, you need two flows, one from w to s and one from w to t.
+    while flow < 2: # the s,t path through w has two halves: one from w to s and one from w to t. Each half is one path leaving from w and each unit of flow is also one path leaving from w. Therefore, you need two flows, one from w to s and one from w to t.
         # A list with one entry per flow node, all starting at -1 (“no edge yet”). During the BFS, parent_edge[y] is filled in with the edge number we used to arrive at node y. After the BFS finishes, we follow these entries backwards from T to rebuild the exact path that was found, so we know which capacities to update. -1 is just a placeholder because real edge numbers start at 0.
         parent_edge = [-1] * N 
         seen = [False] * N
@@ -113,7 +113,7 @@ def path_through(g, w):
             y = to[e ^ 1] 
         flow += 1
 
-    return flow == 2 # flow of 2 means that one unit reached s and one reached t with no shared vertex, which means that there is a path form s,t through w (the red vertex)
+    return flow == 2 # flow of 2 means that one unit reached s and one reached t with no shared vertex, which means that there is a path from s,t through w (the red vertex)
     
 
 
@@ -128,13 +128,13 @@ def many(g):
         order = topo_order(g)
         if order is not None:
             return many_dag(g, order)
-        return "?"
+        return "?!" # directed graph with a cycle: NP-hard
     if g.r == 1: # Case with undirected graph with exactly one red node
         w = g.red.index(True) # get index of the only red node
         if w == g.s or w == g.t: # check whether the only red node is either s or t
             return 1    
         return 1 if path_through(g, w) else 0
-    return "?"
+    return "?!" # undirected with r >= 2 red vertices: NP-hard
 
 
 if __name__ == "__main__":
