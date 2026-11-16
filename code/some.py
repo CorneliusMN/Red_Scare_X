@@ -127,7 +127,7 @@ def some(g):
         order = topo_order(g)
         if order is not None:
             return many_dag(g, order) >= 1 # added >= 1 to return a boolean answer
-        return "?" # case with a cycle
+        return "?!" # directed graph with a cycle: NP-hard
     for w in range(g.n): # try every red node, not only when r == 1
         if g.red[w]:
             if w == g.s or w == g.t: # red node is s or t
