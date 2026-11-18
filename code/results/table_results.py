@@ -1,10 +1,18 @@
 import pandas as pd
 
-none_results = pd.read_csv("none_results.txt", sep=" ", header=None, names=["graph", "N"])
-few_results = pd.read_csv("few.txt", sep=" ", header=None, names=["graph", "F"])
-alternate_results = pd.read_csv("alternate_results.txt", sep=" ", header=None, names=["graph", "A"])
-many_results = pd.read_csv("many_results.txt", sep=" ", header=None, names=["graph", "M"])
-some_results = pd.read_csv("some_results.txt", sep=" ", header=None, names=["graph", "S"])
+
+def read_results(path, col):
+    """Read '<graph> <answer> <time>' lines, keep graph + answer, drop the TOTAL line."""
+    df = pd.read_csv(path, sep=" ", header=None, usecols=[0, 1],
+                     names=["graph", col], dtype=str)
+    return df[df["graph"] != "TOTAL"]
+
+
+none_results = read_results("none_results.txt", "N")
+few_results = read_results("few_results.txt", "F")
+alternate_results = read_results("alternate_results.txt", "A")
+many_results = read_results("many_results.txt", "M")
+some_results = read_results("some_results.txt", "S")
 
 df = (alternate_results
       .merge(few_results, on="graph", how="outer")
