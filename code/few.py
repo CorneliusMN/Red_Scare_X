@@ -26,27 +26,34 @@ def few(g):
     # else we return path, checking if s is red, since it can be
     return dist[g.t] + (1 if g.red[g.s] else 0)
 
+
 def run(name, g):
     start = time.perf_counter()
-    ans = few(g)                                # only the algorithm is timed
+    ans = few(g) # only the algorithm is timed
     elapsed = time.perf_counter() - start
-    line = f"{name} {ans} {elapsed:.4f}s"        # name, result, time on one line
+    line = f"{name} {ans} {elapsed:.4f}s" # name, result, time on one line
     print(line)
-    return line
+    return line, elapsed
 
 
 if __name__ == "__main__":
-    base = os.path.dirname(os.path.abspath(__file__))   # the code/ folder
+    base = os.path.dirname(os.path.abspath(__file__)) # the code/ folder
     data_dir = os.path.join(base, "..", "data")
     out_dir = os.path.join(base, "results")
 
-    if len(sys.argv) > 1:  # one file: python3 none.py ../data/G-ex.txt
+    if len(sys.argv) > 1: # one file: python3 few.py ../data/G-ex.txt
         path = sys.argv[1]
-        run(os.path.basename(path)[:-4], load(path))    # prints only
-    else:                  # no file: run all instances
+        run(os.path.basename(path)[:-4], load(path)) # prints only
+    else: # no file: run all instances
         os.makedirs(out_dir, exist_ok=True)
+        total = 0.0 # sum of algorithm times
         with open(os.path.join(out_dir, "few_results.txt"), "w") as f:
             for path in sorted(glob.glob(os.path.join(data_dir, "*.txt"))):
-                line = run(os.path.basename(path)[:-4], load(path))
+                g = load(path) # parsing, not timed
+                line, elapsed = run(os.path.basename(path)[:-4], g)
+                total += elapsed
                 f.write(line + "\n")
+            summary = f"TOTAL {total:.4f}s"
+            print(summary)
+            f.write(summary + "\n")
       

@@ -38,20 +38,32 @@ def alternate(g):
     return False
 
 
-base = os.path.dirname(os.path.abspath(__file__))   # the code/ folder
-data_dir = os.path.join(base, "..", "data")
-out_dir = os.path.join(base, "results")
-os.makedirs(out_dir, exist_ok=True)
+def run(name, g):
+    start = time.perf_counter()
+    ans = alternate(g) # only the algorithm is timed
+    elapsed = time.perf_counter() - start
+    line = f"{name} {str(ans).lower()} {elapsed:.4f}s" # true/false
+    print(line)
+    return line, elapsed
 
-with open(os.path.join(out_dir, "alternate_results.txt"), "w") as f:
-    for path in sorted(glob.glob(os.path.join(data_dir, "*.txt"))):
-        name = os.path.basename(path)[:-4]
-        g = load(path)                                   # parsing, not timed
 
-        start = time.perf_counter()
-        ans = alternate(g)                               # only the algorithm is timed
-        elapsed = time.perf_counter() - start
+if __name__ == "__main__":
+    base = os.path.dirname(os.path.abspath(__file__)) # the code/ folder
+    data_dir = os.path.join(base, "..", "data")
+    out_dir = os.path.join(base, "results")
 
-        line = f"{name} {int(ans)} {elapsed:.4f}s"
-        f.write(line + "\n")
-        print(line)
+    if len(sys.argv) > 1: # one file: python3 alternate.py ../data/G-ex.txt
+        path = sys.argv[1]
+        run(os.path.basename(path)[:-4], load(path)) # prints only
+    else: # no file: run all instances
+        os.makedirs(out_dir, exist_ok=True)
+        total = 0.0 # sum of algorithm times
+        with open(os.path.join(out_dir, "alternate_results.txt"), "w") as f:
+            for path in sorted(glob.glob(os.path.join(data_dir, "*.txt"))):
+                g = load(path) # parsing, not timed
+                line, elapsed = run(os.path.basename(path)[:-4], g)
+                total += elapsed
+                f.write(line + "\n")
+            summary = f"TOTAL {total:.4f}s"
+            print(summary)
+            f.write(summary + "\n")
