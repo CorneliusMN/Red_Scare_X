@@ -3,6 +3,7 @@ from collections import deque
 from graph import load
 import glob
 import os
+import time
 
 
 def none(g):
@@ -21,11 +22,27 @@ def none(g):
                 queue.append(v)
     return -1 # either there is no path from s to t or every s,t path passes through a red internal node
 
+def run(name, g):
+    start = time.perf_counter()
+    ans = none(g)                                # only the algorithm is timed
+    elapsed = time.perf_counter() - start
+    line = f"{name} {ans} {elapsed:.4f}s"        # name, result, time on one line
+    print(line)
+    return line
+
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1: # one file: python3 many.py data/G-ex.txt
-        print(none(load(sys.argv[1])))
-    else: # no file: run all instances
-        for path in sorted(glob.glob("data/*.txt")):
-            name = os.path.basename(path)[:-4]
-            print(name, none(load(path)))
+    base = os.path.dirname(os.path.abspath(__file__))   # the code/ folder
+    data_dir = os.path.join(base, "..", "data")
+    out_dir = os.path.join(base, "results")
+
+    if len(sys.argv) > 1:  # one file: python3 none.py ../data/G-ex.txt
+        path = sys.argv[1]
+        run(os.path.basename(path)[:-4], load(path))    # prints only
+    else:                  # no file: run all instances
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, "none_results.txt"), "w") as f:
+            for path in sorted(glob.glob(os.path.join(data_dir, "*.txt"))):
+                line = run(os.path.basename(path)[:-4], load(path))
+                f.write(line + "\n")
+            

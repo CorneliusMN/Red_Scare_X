@@ -2,7 +2,8 @@ from collections import deque
 from graph import load
 import glob
 import os
-
+import time
+import sys
 
 def alternate(g):
     # 1 vertex
@@ -37,7 +38,20 @@ def alternate(g):
     return False
 
 
-with open("alternate_results.txt", "w") as f:
-    for path in sorted(glob.glob("data/*.txt")):
+base = os.path.dirname(os.path.abspath(__file__))   # the code/ folder
+data_dir = os.path.join(base, "..", "data")
+out_dir = os.path.join(base, "results")
+os.makedirs(out_dir, exist_ok=True)
+
+with open(os.path.join(out_dir, "alternate_results.txt"), "w") as f:
+    for path in sorted(glob.glob(os.path.join(data_dir, "*.txt"))):
         name = os.path.basename(path)[:-4]
-        f.write(name + " " + str(int(alternate(load(path)))) + "\n")
+        g = load(path)                                   # parsing, not timed
+
+        start = time.perf_counter()
+        ans = alternate(g)                               # only the algorithm is timed
+        elapsed = time.perf_counter() - start
+
+        line = f"{name} {int(ans)} {elapsed:.4f}s"
+        f.write(line + "\n")
+        print(line)

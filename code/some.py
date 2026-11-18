@@ -3,6 +3,7 @@ from collections import deque
 from graph import load
 import glob
 import os
+import time
 
 
 # BFS to find if there is a path from s (source) to t (target)
@@ -136,11 +137,26 @@ def some(g):
                 return True
     return False # False instead of ? of many
 
+def run(name, g):
+    start = time.perf_counter()
+    ans = some(g)                                # only the algorithm is timed
+    elapsed = time.perf_counter() - start
+    line = f"{name} {ans} {elapsed:.4f}s"        # name, result, time on one line
+    print(line)
+    return line
+
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1: # one file: python3 some.py data/G-ex.txt
-        print(str(some(load(sys.argv[1]))).lower())
-    else: # no file: run all instances
-        for path in sorted(glob.glob("data/*.txt")):
-            name = os.path.basename(path)[:-4]
-            print(name, str(some(load(path))).lower())
+    base = os.path.dirname(os.path.abspath(__file__))   # the code/ folder
+    data_dir = os.path.join(base, "..", "data")
+    out_dir = os.path.join(base, "results")
+
+    if len(sys.argv) > 1:  # one file: python3 none.py ../data/G-ex.txt
+        path = sys.argv[1]
+        run(os.path.basename(path)[:-4], load(path))    # prints only
+    else:                  # no file: run all instances
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, "some_results.txt"), "w") as f:
+            for path in sorted(glob.glob(os.path.join(data_dir, "*.txt"))):
+                line = run(os.path.basename(path)[:-4], load(path))
+                f.write(line + "\n")
