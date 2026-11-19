@@ -129,7 +129,7 @@ def many(g):
         order = topo_order(g)
         if order is not None:
             return many_dag(g, order)
-        return "?!" # directed graph with a cycle: NP-hard
+        return "?"
     if g.r == 1: # Case with undirected graph with exactly one red node
         w = g.red.index(True) # get index of the only red node
         if w == g.s or w == g.t: # check whether the only red node is either s or t

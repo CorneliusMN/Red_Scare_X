@@ -128,7 +128,7 @@ def some(g):
         order = topo_order(g)
         if order is not None:
             return many_dag(g, order) >= 1 # added >= 1 to return a boolean answer
-        return "?!" # directed graph with a cycle: NP-hard
+        return "?"
     for w in range(g.n): # try every red node, not only when r == 1
         if g.red[w]:
             if w == g.s or w == g.t: # red node is s or t
@@ -142,7 +142,7 @@ def run(name, g):
     start = time.perf_counter()
     ans = some(g) # only the algorithm is timed
     elapsed = time.perf_counter() - start
-    line = f"{name} {ans} {elapsed:.4f}s" # name, result, time on one line
+    line = f"{name} {str(ans).lower()} {elapsed:.4f}s" # name, result, time on one line
     print(line)
     return line, elapsed
 
