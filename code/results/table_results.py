@@ -26,7 +26,8 @@ df["n"] = df["graph"].map(lambda name: int(open(f"../../data/{name}.txt").readli
 cols = ["A", "F", "M", "N", "S"]
 df = df[["graph", "n"] + cols].sort_values("n")
 
-df.to_csv("results.csv", index=False)
+with open("results.txt", "w") as f:
+    df.to_csv(f, index=False)
 
 # ---------- LaTeX table ----------
 def fmt(v):
